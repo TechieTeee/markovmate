@@ -16,12 +16,14 @@ export interface Task {
   completedAt?: Date;
 }
 
-// Optimized task sequence
+// Optimized task sequence (single solution)
 export interface OptimizedSequence {
   tasks: Task[];
   estimatedTime: number; // total time in minutes
   parallelGroups: ParallelGroup[];
   timeSavings: number; // potential time saved in minutes
+  qualityScore: number; // objective function value
+  chainId?: number; // which MCMC chain generated this
 }
 
 // Parallel task group
