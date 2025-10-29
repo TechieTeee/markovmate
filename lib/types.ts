@@ -59,6 +59,59 @@ export interface LLMSuggestion {
 export interface AppState {
   tasks: Task[];
   optimizedSequence?: OptimizedSequence;
+  optimizedSequences?: OptimizedSequence[]; // Multiple solutions from MCMC
   isOptimizing: boolean;
   history: TaskHistory[];
+  mcmcState?: MCMCState;
+}
+
+// MCMC-specific types
+
+// MCMC Chain State
+export interface MCMCChainState {
+  chainId: number;
+  currentSequence: Task[];
+  currentScore: number;
+  samples: Task[][]; // collected samples
+  scores: number[]; // scores for each sample
+  acceptanceRate: number;
+  iterations: number;
+}
+
+// MCMC Configuration
+export interface MCMCConfig {
+  numChains: number; // number of parallel chains (2-8)
+  iterations: number; // iterations per chain
+  burnIn: number; // burn-in period to discard
+  temperature?: number; // for simulated annealing
+  convergenceThreshold?: number; // for early stopping
+}
+
+// MCMC State (overall optimization state)
+export interface MCMCState {
+  chains: MCMCChainState[];
+  isConverged: boolean;
+  convergenceMetric?: number; // Gelman-Rubin statistic
+  bestSolutions: OptimizedSequence[]; // top-k solutions
+  startTime: number;
+  elapsedTime: number;
+}
+
+// Objective function result
+export interface ObjectiveResult {
+  score: number; // lower is better (total time)
+  estimatedTime: number;
+  penaltyBreakdown?: {
+    dependencyViolations: number;
+    inefficiency: number;
+  };
+}
+
+// MCMC Sample for convergence analysis
+export interface MCMCSample {
+  iteration: number;
+  chainId: number;
+  sequence: Task[];
+  score: number;
+  accepted: boolean;
 }

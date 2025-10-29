@@ -8,6 +8,15 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Add empty turbopack config to silence warning
+  turbopack: {},
+  // Enable Web Workers support
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.output.globalObject = 'self';
+    }
+    return config;
+  },
 };
 
 module.exports = withPWA(nextConfig);
